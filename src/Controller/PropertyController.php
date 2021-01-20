@@ -17,7 +17,7 @@ class PropertyController extends AbstractController
     public function index(): Response
     {
         return $this->render('property/index.html.twig', [
-            'controller_name' => 'PropertyController',
+            'current_menu' => 'properties',
         ]);
     }
 }

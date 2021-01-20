@@ -23,14 +23,11 @@
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item active">
-						<a class="nav-link" href="#">Home
-							<span class="sr-only">(current)</span>
-						</a>
-					</li>
-					<li class="nav-item">
+
+					<li class="nav-item {{ (current_menu is defined and current_menu == 'properties') ? 'active' : '' }}">
 						<a class="nav-link" href="{{path('property.index')}}">Acheter</a>
 					</li>
+
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							Dropdown
@@ -51,8 +48,6 @@
 					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 				</form>
 			</div>
-		</nav>
-
-		{% block body %}{% endblock %}
+		</body>
 	</body>
-</html>
+</html></nav>{% block body %}{% endblock %}</body></html>
