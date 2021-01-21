@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{property.title}}
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1>{{property.title}}</h1>
+		<h1>{{property.description}}</h1>
+		<h1>{{property.surface}}</h1>
+		<h1>{{property.rooms}}</h1>
+		<h1>{{property.bedrooms}}</h1>
+		<h1>{{property.floor}}</h1>
+		<h1>{{property.city}}</h1>
+		<h1>{{property.address}}</h1>
+		<h1>{{property.postaleCode}}</h1>
+		<h1>{{property.sold}}</h1>
+		<h1>{{property.price}}</h1>
+		<h1>{{property.heat}}</h1>
+	</div>
+
+{% endblock %}

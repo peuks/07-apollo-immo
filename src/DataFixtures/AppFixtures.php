@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Property;
+use Cocur\Slugify\Slugify;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
@@ -49,7 +50,8 @@ class AppFixtures extends Fixture
                 ->setAddress('40 Avenue du Rhin')
                 ->setCity('Strasbourg')
                 ->setPostaleCode(67000)
-                ->setSold(true);
+                ->setSold(true)
+                ->setSlug((new Slugify())->slugify($property->getTitle()));
 
             // Persist Property in database
             $em->persist($property);
