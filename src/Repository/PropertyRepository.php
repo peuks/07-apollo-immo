@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Property;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Property|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,6 +20,54 @@ class PropertyRepository extends ServiceEntityRepository
         parent::__construct($registry, Property::class);
     }
 
+    /**
+     * @method  findAllAvailable("true"|"false")
+     * 
+     * Will find all available or sold properties
+     * 
+     * @method  findAllAvailable("true") will return all solded properties
+     *  
+     * @method  findAllAvailable("false") will return all availables properties 
+     * 
+     */
+
+    public function findAllAvailable($sold = "false", $order = "ASC")
+    {
+        // QueryBuilder('p') is a an objcet that let us construct ( concevoir ) a query with an alias 'p'
+        return $this->findVisibleQuery($sold, $order)
+            // Check every Property still avaible ( not sold ) 
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    /**
+     * @method  findLatest($sold = "true|false", $maxResult = 5, $order = "DESC|ASC")
+     *  Will find x latest sold/available properties
+     *  By default will return the $maxResult = 5 latests availables ($sold = "false"), properties by DESC order
+     */
+
+    public function findLatest($sold = "false", $maxResult = 5, $order = "DESC"): array
+    {
+        // QueryBuilder('p') is a an objcet that let us construct ( concevoir ) a query with an alias 'p'
+        return $this->findVisibleQuery($sold, $order)
+            ->setMaxResults($maxResult)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /*
+     * @method  findVisibleQuery($sold="false",$order="ASC")
+     * will return all solded ($sold=true)| available ($sold=false) properties by order  $order = ASC | DESC 
+     * 
+     */
+
+    private function findVisibleQuery($sold, $order): QueryBuilder
+    {
+        return $this->createQueryBuilder('p')
+            ->where("p.sold = $sold")
+            ->orderBy('p.id', "$order");
+    }
     // /**
     //  * @return Property[] Returns an array of Property objects
     //  */

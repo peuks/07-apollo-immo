@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Property
 {
+    const HEAT = [
+        0 => 'electric',
+        1 => 'gaz'
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -55,7 +60,7 @@ class Property
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $adresse;
+    private $address;
 
     /**
      * @ORM\Column(type="integer")
@@ -71,6 +76,25 @@ class Property
      * @ORM\Column(type="datetime")
      */
     private $created_at;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $price;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $heat;
+
+    public function __construct()
+    {
+        // set creat_at default value at actual time
+        $this->created_at = new \DateTime();
+
+        // set default value of sold to false
+        $this->sold = false;
+    }
 
     public function getId(): ?int
     {
@@ -161,14 +185,14 @@ class Property
         return $this;
     }
 
-    public function getAdresse(): ?string
+    public function getAddress(): ?string
     {
-        return $this->adresse;
+        return $this->address;
     }
 
-    public function setAdresse(string $adresse): self
+    public function setAddress(string $address): self
     {
-        $this->adresse = $adresse;
+        $this->address = $address;
 
         return $this;
     }
@@ -205,6 +229,35 @@ class Property
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(int $price): self
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getFormattedPrice(): string
+    {
+        return number_format($this->price, 0, '', ' ');
+    }
+
+    public function getHeat(): ?int
+    {
+        return $this->heat;
+    }
+
+    public function setHeat(int $heat): self
+    {
+        $this->heat = $heat;
 
         return $this;
     }
