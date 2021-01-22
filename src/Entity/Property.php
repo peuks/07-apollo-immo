@@ -11,11 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Property
 {
-    const HEAT = [
-        0 => 'electric',
-        1 => 'gaz'
-    ];
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -89,9 +84,11 @@ class Property
     private $price;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity=Heat::class, inversedBy="properties")
      */
     private $heat;
+
+
 
     public function __construct()
     {
@@ -259,18 +256,6 @@ class Property
         return number_format($this->price, 0, '', ' ');
     }
 
-    public function getHeat(): ?int
-    {
-        return $this->heat;
-    }
-
-    public function setHeat(int $heat): self
-    {
-        $this->heat = $heat;
-
-        return $this;
-    }
-
 
     public function getSlug(): string
     {
@@ -280,6 +265,18 @@ class Property
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getHeatType(): string
+    {
+        return $this->heat->getType();
+    }
+
+    public function setHeatType(?Heat $heat): self
+    {
+        $this->heat = $heat;
 
         return $this;
     }
