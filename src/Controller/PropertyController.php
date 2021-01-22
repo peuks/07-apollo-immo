@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PropertyController extends AbstractController
 {
+    private $em;
     public function __construct(PropertyRepository $em)
     {
         // All functions from PropertyRepository will be accessibles with $this-> such find functions
@@ -34,12 +35,17 @@ class PropertyController extends AbstractController
     }
 
     /**
-     * @Route("/bien/{slug}/{id}", name="property.show", requirements={"slug": "[a-z0-9\-]*"})
+     * @Route("/bien/{slug}-{id}", name="property.show", requirements={"slug": "[a-z0-9\-]*"})
      */
 
     public function show(Property $property, string $slug): Response
     {
-
+        if ($property->getSlug() !== $slug) {
+            $this->redirectToRoute('properfy.show', [
+                'id' => $property->getId(),
+                'slug' => $property->getSlug(),
+            ]);
+        }
         // Send property to the view
         return $this->render('property/show.html.twig', [
             'current_menu' => 'properties',
