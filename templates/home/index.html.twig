@@ -9,8 +9,9 @@
 		<h1>Agence lorem ipsus</h1>
 		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis, officia? Eius eveniet neque culpa! Velit voluptas perspiciatis sapiente ullam ab vel explicabo in dignissimos, libero voluptatibus obcaecati dolores. Earum, suscipit!</p>
 	</div>
+
 	<div class="container">
-		<h2>Les derniers biens disponibles</h2>
+		<h2>Les derniers biens (disponibles)</h2>
 		<div class="row flex">
 			{% for property in properties %}
 				<div class="col-3">
@@ -24,7 +25,6 @@
 							<p class="card-text">
 								{{property.city}}
 								({{property.postaleCode}})
-								{# <pre>{{ dump(property) }}</pre> #}
 							</p>
 							<div class="text-primary">
 								{{property.formattedPrice }}

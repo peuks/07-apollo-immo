@@ -31,7 +31,7 @@ class Property
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $slug;
+    public $slug;
 
     /**
      * @ORM\Column(type="text", nullable=true)

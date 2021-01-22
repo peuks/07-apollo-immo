@@ -17,7 +17,7 @@ class AppFixtures extends Fixture
         // /!\Creat_at and sold are set at the creation by default in the constructor /!\
         for ($i = 0; $i < 10; $i++) {
             $property = new Property;
-            $property->setTitle('Mon premier bien')
+            $property->setTitle("Mon premier bien $i")
                 ->setPrice(200000)
                 ->setRooms(4)
                 ->setBedrooms(3)
@@ -28,7 +28,8 @@ class AppFixtures extends Fixture
                 ->setAddress('40 Avenue du Rhin')
                 ->setCity('Strasbourg')
                 ->setPostaleCode(67000)
-                ->setSold(false);
+                ->setSold(false)
+                ->setSlug((new Slugify())->slugify($property->getTitle()));
 
             // Persist Property in database
             $em->persist($property);
@@ -52,7 +53,6 @@ class AppFixtures extends Fixture
                 ->setPostaleCode(67000)
                 ->setSold(true)
                 ->setSlug((new Slugify())->slugify($property->getTitle()));
-
             // Persist Property in database
             $em->persist($property);
 
