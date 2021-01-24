@@ -19,3 +19,33 @@ composer require cocur/slugify
         return (new Slugify())->slugify($this->title);
     }
 ```
+
+## Controller dans un namespace séparé
+
+```
+mkdir src/Admin && touch src/Admin/AdminPropertyController.php
+```
+
+```php
+// src/Admin/AdminPropertyController.php
+<?php
+
+namespace App\Controller\Admin;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+class AdminPropertyController extends AbstractController
+{
+    /**
+     * @Route("/admin/property", name="admin_property")
+     */
+    public function index(): Response
+    {
+        return $this->render('admin_property/index.html.twig', [
+            'controller_name' => 'AdminPropertyController',
+        ]);
+    }
+}
+```

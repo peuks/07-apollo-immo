@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title  %}
+	Éditer |
+	{{property.title}}
+{% endblock %}
+
+
+{% block body %}
+	<div class="container mt-4">
+		<h1>Éditer les biens</h1>
+
+		<table class="table table-stripped">
+			<thead>
+				<tr>
+					<th>Titre</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+
+				<tr>
+					<td>{{property.id}}</td>
+					<td>{{property.title}}</td>
+					<td>{# <a href="{{path('admin.property.edit',{id: property.id})}}" class="btn btn-secondary">Éditer</a> #}
+						{# <a href="{{path('admin.property.edit',{id: property.id})}}" class="btn btn-secondary">Supprimer</a> #}
+					</td>
+				</tr>
+			</tbody>
+
+		</table>
+	</div>
+
+
+{% endblock %}
