@@ -5,6 +5,11 @@
 {% block body %}
 	<div class="container mt-4">
 		<h1>Gérer les biens</h1>
+		{% for message in app.flashes('sucess') %}
+			<div class="alert alert-success">
+				{{message}}
+			</div>
+		{% endfor %}
 
 		<table class="table table-stripped">
 			<thead>
@@ -21,13 +26,17 @@
 						<td>{{property.id}}</td>
 						<td>{{property.title}}</td>
 						<td>
-							<a href="{{path('admin.property.edit',{id: property.id})}}" class="btn btn-secondary">Éditer</a>
-							<a href="{{path('admin.property.edit',{id: property.id})}}" class="btn btn-secondary">Supprimer</a>
+							<a href="{{path('admin.property.edit',{id: property.id, statue:'edit'})}}" class="btn btn-secondary">Éditer</a>
+							<a href="{{path('admin.property.delete',{id: property.id})}}" class="btn btn-danger">Supprimer</a>
+
 						</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
+
+		<a href="{{path('admin.property.create')}}" class="btn btn-secondary">Nouveau</a>
+
 	</div>
 
 

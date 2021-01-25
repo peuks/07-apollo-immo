@@ -86,7 +86,7 @@ class Property
     /**
      * @ORM\ManyToOne(targetEntity=Heat::class, inversedBy="properties")
      */
-    private $heat;
+    public $heat;
 
 
 
@@ -264,7 +264,7 @@ class Property
 
     public function setSlug(string $slug): self
     {
-        $this->slug = $slug;
+        $this->slug = (new Slugify())->slugify(strtolower($slug));
 
         return $this;
     }
