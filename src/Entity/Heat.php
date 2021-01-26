@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\HeatRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+
+use App\Entity\Property;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\HeatRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=HeatRepository::class)
@@ -63,7 +65,7 @@ class Heat
     {
         if (!$this->properties->contains($property)) {
             $this->properties[] = $property;
-            $property->setHeat($this);
+            $property->setHeatType($this);
         }
 
         return $this;
@@ -73,8 +75,8 @@ class Heat
     {
         if ($this->properties->removeElement($property)) {
             // set the owning side to null (unless already changed)
-            if ($property->getHeat() === $this) {
-                $property->setHeat(null);
+            if ($property->getHeatType() === $this) {
+                $property->setHeatType(null);
             }
         }
 

@@ -6,6 +6,12 @@ use App\Repository\PropertyRepository;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\Mapping as ORM;
 
+// Validation
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Unique;
+
+
+
 /**
  * @ORM\Entity(repositoryClass=PropertyRepository::class)
  */
@@ -19,12 +25,17 @@ class Property
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=100)
+     * @Assert\Length(
+     * min = 3,
+     * )
+     * @Assert\Unique
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
      */
     public $slug;
 
@@ -34,27 +45,57 @@ class Property
     private $description;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer");
+     * @Assert\Range(
+     *      min = 10,
+     *      max = 1000,
+     * 
+     *      notInRangeMessage = "La surface doit être comprise entre {{ min }}m² et {{ max }}m²",
+     * )
      */
     private $surface;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(
+     * min = 1,
+     * max = 100,
+     * minMessage= "Vous devez renseigner au minimum {{ min }} pièce",
+     * maxMessage= "Vous devez renseigner au maximum {{ max }} pièce",
+     * )
      */
     private $rooms;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(
+     * min = 1,
+     * max = 100,
+     * minMessage= "Vous devez renseigner au minimum {{ min }} chambre",
+     * maxMessage= "Vous ne pouvez renseigner maximum {{ max }} chambres",
+     * )
      */
     private $bedrooms;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(
+     * min = 0,
+     * max = 20,
+     * minMessage= "L'étage ne peut pas négatif",
+     * maxMessage= "L'étage ne peut pas être supérieur à 10",
+     * )
      */
     private $floor;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 50,
+     *      minMessage = "La ville ne peut contenir moins de  {{ limit }} caractères.",
+     *      maxMessage = "La ville ne peut contenir plus de  {{ limit }} caractères.",
+     * )
      */
     private $city;
 
@@ -65,6 +106,7 @@ class Property
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Regex("/^[0-9]{5}$/")
      */
     private $postale_code;
 
