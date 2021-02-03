@@ -49,3 +49,7 @@ class AdminPropertyController extends AbstractController
     }
 }
 ```
+
+## Securité
+
+Création de la class utilisateur qui doit avoir la UserInterface
