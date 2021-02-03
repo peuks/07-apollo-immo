@@ -53,3 +53,150 @@ class AdminPropertyController extends AbstractController
 ## Securité
 
 Création de la class utilisateur qui doit avoir la UserInterface
+
+## système de recherche
+
+Le Système de recherche n'est pas liée à la BDD. Il faut créer une entitée manuellement puis un formulaire qui va avec.
+
+### PropertySeach Entity
+
+```zsh
+touch src/Entity/PropertySeach.php
+```
+
+```php
+<?php
+class PropertySearch
+{
+    /**
+     * @var int|null
+     * La variable peut être un entier ou null si aucune recherche n'est faite
+     */
+    private $maxPrice;
+
+    /**
+     * @var int|null
+     * La variable peut être un entier ou null si aucune recherche n'est faite
+     */
+    private $minSurface;
+
+    /**
+     * Get la variable peut être un entier ou null si aucune recherche n'est faite
+     *
+     * @return  int|null
+     */
+    public function getMaxPrice()
+    {
+        return $this->maxPrice;
+    }
+
+    /**
+     * Set la variable peut être un entier ou null si aucune recherche n'est faite
+     *
+     * @param  int|null  $maxPrice  La variable peut être un entier ou null si aucune recherche n'est faite
+     *
+     * @return  self
+     */
+    public function setMaxPrice(int $maxPrice): PropertySearch
+    {
+        $this->maxPrice = $maxPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get la variable peut être un entier ou null si aucune recherche n'est faite
+     *
+     * @return  int|null
+     */
+    public function getMinSurface()
+    {
+        return $this->minSurface;
+    }
+
+    /**
+     * Set la variable peut être un entier ou null si aucune recherche n'est faite
+     *
+     * @param  int|null  $minSurface  La variable peut être un entier ou null si aucune recherche n'est faite
+     *
+     * @return  self
+     */
+    public function setMinSurface(int $minSurface): PropertySearch
+    {
+        $this->minSurface = $minSurface;
+
+        return $this;
+    }
+}
+
+```
+
+### Pagination
+
+```zsh
+composer require knplabs/knp-paginator-bundle
+```
+
+### Formulaire de PropertySeach Entity
+
+```php
+❯ php bin/console make:form PropertySearchType
+
+ The name of Entity or fully qualified model class name that the new form will be bound to (empty for none):
+ > \App\Entity\PropertySearch
+
+ created: src/Form/PropertySearchType.php
+
+
+  Success!
+
+ Next: Add fields to your form and start using it.
+ Find the documentation at https://symfony.com/doc/current/forms.html
+```
+
+```php
+<?php
+
+namespace App\Form;
+
+use App\Entity\PropertySearch;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class PropertySearchType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('maxPrice', IntegerType::class, [
+                'required' => false,
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Surface Minimale'
+                ]
+            ])
+            ->add('minSurface', IntegerType::class, [
+                'required' => false,
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Budget Maximal'
+                ]
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => PropertySearch::class,
+            // Research must be done with get method
+            'method' => 'get',
+            // We don't need a token for a research
+            'csrf_protection' => false
+        ]);
+    }
+}
+```
+
+Il faut retourner dans notre PropertyController pour gérer le traitement et l'affichage

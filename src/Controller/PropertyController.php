@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Property;
+use App\Entity\PropertySearch;
+use App\Form\PropertyType;
 use App\Repository\PropertyRepository;
-// use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,13 +26,14 @@ class PropertyController extends AbstractController
      */
     public function index(): Response
     {
-        // Get all not solded properties
+        // Get all not solded properties ( all availables )
         $properties = $this->em->findAllAvailable("false");
 
         // Send properties to the view
         return $this->render('property/index.html.twig', [
             'current_menu' => 'properties',
             'properties' => $properties,
+            // 'formSearch' => $form->createView()
         ]);
     }
 

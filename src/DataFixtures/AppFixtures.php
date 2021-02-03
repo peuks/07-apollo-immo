@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use Faker\Factory;
 use App\Entity\Heat;
+use App\Entity\User;
 use App\Entity\Property;
 use Cocur\Slugify\Slugify;
 use Doctrine\Persistence\ObjectManager;
@@ -13,6 +14,16 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
+
+        // ------------------------------------------------------------ \\
+        // ----------------------------------Initialize ADMIN ----------\\
+        // ------------------------------------------------------------- \\        
+
+        // Création d'un admin
+        $admin = new User();
+        $admin->setEmail("admin@gmail.com")
+            ->setRoles(['ROLE_ADMIN'])
+            ->setPassword($this->encoder->encodePassword($admin, 'password'));
 
         // ------------------------------------------------------------ \\
         // ----------------------------------Initialize FAKER ----------\\
