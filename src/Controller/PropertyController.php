@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Property;
-use App\Entity\PropertySearch;
 use App\Form\PropertyType;
+use App\Entity\PropertySearch;
 use App\Repository\PropertyRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,10 +26,15 @@ class PropertyController extends AbstractController
     /**
      * @Route("/biens", name="property.index")
      */
-    public function index(): Response
+    public function index(PaginatorInterface $paginator, Request $request): Response
     {
         // Get all not solded properties ( all availables )
-        $properties = $this->em->findAllAvailable("false");
+        $properties = $paginator->paginate(
+            $this->em->findAllAvailableQuery("false"),
+            $request->query->getInt('page', 1), /*page number*/
+            12
+        );
+        // $this->em->findAllAvailable("false");
 
         // Send properties to the view
         return $this->render('property/index.html.twig', [

@@ -6,6 +6,7 @@ use App\Entity\Property;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 
 /**
  * @method Property|null find($id, $lockMode = null, $lockVersion = null)
@@ -28,16 +29,18 @@ class PropertyRepository extends ServiceEntityRepository
      * @method  findAllAvailable("true") will return all solded properties
      *  
      * @method  findAllAvailable("false") will return all availables properties 
-     * 
+     * @return Query
      */
 
-    public function findAllAvailable($sold = "false", $order = "ASC")
+    public function findAllAvailableQuery($sold = "false", $order = "ASC"): Query
     {
         // QueryBuilder('p') is a an objcet that let us construct ( concevoir ) a query with an alias 'p'
         return $this->findVisibleQuery($sold, $order)
             // Check every Property still avaible ( not sold ) 
-            ->getQuery()
-            ->getResult();
+            ->getQuery();
+
+        // On veut que la requeête pour la pagination
+        // ->getResult();
     }
 
 

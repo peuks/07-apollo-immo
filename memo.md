@@ -137,6 +137,43 @@ class PropertySearch
 composer require knplabs/knp-paginator-bundle
 ```
 
+**Créer le fichier de configuration**
+
+```zsh
+touch config/packages/knp.paginator.yaml
+```
+
+Il faut modifier notre Repository
+
+```php
+    public function findAllAvailableQuery($sold = "false", $order = "ASC"): Query
+    {
+        // QueryBuilder('p') is a an objcet that let us construct ( concevoir ) a query with an alias 'p'
+        return $this->findVisibleQuery($sold, $order)
+            // Check every Property still avaible ( not sold )
+            ->getQuery();
+
+        // On veut que la requeête pour la pagination
+        // ->getResult();
+    }
+```
+
+```yml
+knp_paginator:
+  page_range: 5 # number of links showed in the pagination menu (e.g: you have 10 pages, a page_range of 3, on the 5th page you'll see links to page 4, 5, 6)
+  default_options:
+    page_name: page # page query parameter name
+    sort_field_name: sort # sort field query parameter name
+    sort_direction_name: direction # sort direction query parameter name
+    distinct: true # ensure distinct results, useful when ORM queries are using GROUP BY statements
+    filter_field_name: filterField # filter field query parameter name
+    filter_value_name: filterValue # filter value query parameter name
+  template:
+    pagination: "@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig" # sliding pagination controls template
+    sortable: "@KnpPaginator/Pagination/sortable_link.html.twig" # sort link template
+    filtration: "@KnpPaginator/Pagination/filtration.html.twig" # filters template
+```
+
 ### Formulaire de PropertySeach Entity
 
 ```php
@@ -146,8 +183,6 @@ composer require knplabs/knp-paginator-bundle
  > \App\Entity\PropertySearch
 
  created: src/Form/PropertySearchType.php
-
-
   Success!
 
  Next: Add fields to your form and start using it.
@@ -200,3 +235,7 @@ class PropertySearchType extends AbstractType
 ```
 
 Il faut retourner dans notre PropertyController pour gérer le traitement et l'affichage
+
+```
+
+```
