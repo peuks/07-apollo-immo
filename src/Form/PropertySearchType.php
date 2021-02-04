@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\PropertySearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -17,14 +18,14 @@ class PropertySearchType extends AbstractType
                 'required' => false,
                 'label' => false,
                 'attr' => [
-                    'placeholder' => 'Surface Minimale'
+                    'placeholder' => 'Budget Maximal'
                 ]
             ])
             ->add('minSurface', IntegerType::class, [
                 'required' => false,
                 'label' => false,
                 'attr' => [
-                    'placeholder' => 'Budget Maximal'
+                    'placeholder' => 'Surface Minimale'
                 ]
             ]);
     }
@@ -38,5 +39,12 @@ class PropertySearchType extends AbstractType
             // We don't need a token for a research
             'csrf_protection' => false
         ]);
+    }
+    public function getBlockPrefix()
+    {
+        // Ne retien retourner comme prefix dans l'url
+        // Avant https://localhost:8000/biens?property_search%5BminSurface%5D=&property_search%5BmaxPrice%5D=15
+        // Après https://localhost:8000/biens?minSurface=11&maxPrice=16
+        return '';
     }
 }

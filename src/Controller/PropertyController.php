@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Property;
 use App\Form\PropertyType;
 use App\Entity\PropertySearch;
+use App\Form\PropertySearchType;
 use App\Repository\PropertyRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,12 +26,20 @@ class PropertyController extends AbstractController
 
     /**
      * @Route("/biens", name="property.index")
+     * @return Response
      */
     public function index(PaginatorInterface $paginator, Request $request): Response
     {
-        // Get all not solded properties ( all availables )
+        $search = new PropertySearch();
+        // Il faut utiliser le type PropertySearchType pour créer notre formulaire
+        $form = $this->createForm(PropertySearchType::class, $search);
+        // Gérer la requête
+        $form->handleRequest($request);
+
+
+        // Get all not solded properties ( all availables ) with paginator
         $properties = $paginator->paginate(
-            $this->em->findAllAvailableQuery("false"),
+            $this->em->findAllAvailableQuery($search),
             $request->query->getInt('page', 1), /*page number*/
             12
         );
@@ -40,7 +49,7 @@ class PropertyController extends AbstractController
         return $this->render('property/index.html.twig', [
             'current_menu' => 'properties',
             'properties' => $properties,
-            // 'formSearch' => $form->createView()
+            'formSearch' => $form->createView()
         ]);
     }
 

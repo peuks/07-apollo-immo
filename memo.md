@@ -174,6 +174,63 @@ knp_paginator:
     filtration: "@KnpPaginator/Pagination/filtration.html.twig" # filters template
 ```
 
+#### Fonction index dans propertyController.php
+
+```php
+
+    /**
+     * @Route("/biens", name="property.index")
+     */
+    public function index(PaginatorInterface $paginator, Request $request): Response
+    {
+        // Get all not solded properties ( all availables )
+        $properties = $paginator->paginate(
+            $this->em->findAllAvailableQuery("false"),
+            $request->query->getInt('page', 1), /*page number*/
+            12
+        );
+        // $this->em->findAllAvailable("false");
+
+        // Send properties to the view
+        return $this->render('property/index.html.twig', [
+            'current_menu' => 'properties',
+            'properties' => $properties,
+            // 'formSearch' => $form->createView()
+        ]);
+    }
+```
+
+#### insérer la pagination dans twig
+
+```twig
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Voir tous nos biens
+{% endblock %}
+
+{% block body %}
+	<div class="jumbotron">
+		<div class="container">{# {{form_start(formSearch)}} #}
+			{# {{form_end(formSearch)}} #}
+		</div>
+	</div>
+	<div class="container mt-4">
+		<h1>Voir tous nos biens</h1>
+		<div class="row">
+			{% for property in properties %}
+				<div class="col-md-4">
+					{% include "property/_property.html.twig" %}
+				</div>
+			{% endfor %}
+		</div>
+		<div class="pagination">
+			{{ knp_pagination_render(properties) }}
+		</div>
+	</div>
+{% endblock %}
+```
+
 ### Formulaire de PropertySeach Entity
 
 ```php
@@ -232,10 +289,4 @@ class PropertySearchType extends AbstractType
         ]);
     }
 }
-```
-
-Il faut retourner dans notre PropertyController pour gérer le traitement et l'affichage
-
-```
-
 ```

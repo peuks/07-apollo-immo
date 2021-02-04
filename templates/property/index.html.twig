@@ -6,8 +6,26 @@
 
 {% block body %}
 	<div class="jumbotron">
-		<div class="container">{# {{form_start(formSearch)}} #}
-			{# {{form_end(formSearch)}} #}
+		<div class="container">
+			{{form_start(formSearch)}}
+			<div class="form-row">
+				<div class="col">
+					<div class="form_row">
+						{{form_row(formSearch.minSurface)}}
+					</div>
+				</div>
+				<div class="col">
+					<div class="form_row">
+						{{form_row(formSearch.maxPrice)}}
+					</div>
+				</div>
+				<div class="col">
+					<div class="form_row">
+						<button class="btn btn-primary" type="submit">Chercher</button>
+					</div>
+				</div>
+			</div>
+			{{form_end(formSearch)}}
 		</div>
 	</div>
 	<div class="container mt-4">

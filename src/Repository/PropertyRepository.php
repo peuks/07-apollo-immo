@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Property;
+use App\Entity\PropertySearch;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -22,7 +23,7 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
     /**
-     * @method  findAllAvailable("true"|"false")
+     * @method  findAllAvailable($sold="true"|"false", $order = "ASC"|"DESC", $property)
      * 
      * Will find all available or sold properties
      * 
@@ -32,12 +33,24 @@ class PropertyRepository extends ServiceEntityRepository
      * @return Query
      */
 
-    public function findAllAvailableQuery($sold = "false", $order = "ASC"): Query
+    public function findAllAvailableQuery(PropertySearch $search): Query
     {
-        // QueryBuilder('p') is a an objcet that let us construct ( concevoir ) a query with an alias 'p'
-        return $this->findVisibleQuery($sold, $order)
-            // Check every Property still avaible ( not sold ) 
-            ->getQuery();
+        $query = $this->findVisibleQuery();
+
+        if ($search->getMaxPrice()) {
+            $query = $query
+                ->where('p.price <= :maxprice')
+                ->setParameter('maxprice', $search->getMaxPrice());
+        }
+
+        if ($search->getMinSurface()) {
+
+            $query = $query
+                ->where('p.surface >= :minsurface')
+                ->setParameter('minsurface', $search->getMinSurface());
+        }
+
+        return $query->getQuery();
 
         // On veut que la requeête pour la pagination
         // ->getResult();
@@ -50,10 +63,11 @@ class PropertyRepository extends ServiceEntityRepository
      *  By default will return the $maxResult = 5 latests availables ($sold = "false"), properties by DESC order
      */
 
-    public function findLatest($sold = "false", $maxResult = 5, $order = "DESC"): array
+    public function findLatest($maxResult = 5): array
     {
+
         // QueryBuilder('p') is a an objcet that let us construct ( concevoir ) a query with an alias 'p'
-        return $this->findVisibleQuery($sold, $order)
+        return $this->findVisibleQuery()
             ->setMaxResults($maxResult)
             ->getQuery()
             ->getResult();
@@ -65,11 +79,11 @@ class PropertyRepository extends ServiceEntityRepository
      * 
      */
 
-    private function findVisibleQuery($sold, $order): QueryBuilder
+    private function findVisibleQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('p')
-            ->where("p.sold = $sold")
-            ->orderBy('p.id', "$order");
+            ->where("p.sold = false")
+            ->orderBy('p.id', "ASC");
     }
     // /**
     //  * @return Property[] Returns an array of Property objects
