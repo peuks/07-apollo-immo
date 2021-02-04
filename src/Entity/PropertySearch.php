@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
+
 class PropertySearch
 {
     /**
@@ -13,6 +16,8 @@ class PropertySearch
     /**
      * @var int|null
      * La variable peut être un entier ou null si aucune recherche n'est faite
+     * @Assert\Range(min = 10,
+     * max = 400)
      */
     private $minSurface;
 
