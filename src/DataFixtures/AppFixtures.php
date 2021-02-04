@@ -9,9 +9,16 @@ use App\Entity\Property;
 use Cocur\Slugify\Slugify;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
+    protected  $encoder;
+
+    public function __construct(UserPasswordEncoderInterface $encoder)
+    {
+        $this->encoder = $encoder;
+    }
     public function load(ObjectManager $manager)
     {
 
@@ -20,11 +27,12 @@ class AppFixtures extends Fixture
         // ------------------------------------------------------------- \\        
 
         // Création d'un admin
-        $admin = new User();
-        $admin->setEmail("admin@gmail.com")
+        $user = new User();
+        $user->setEmail("admin@admin.com")
             ->setRoles(['ROLE_ADMIN'])
-            ->setPassword($this->encoder->encodePassword($admin, 'password'));
-
+            ->setPassword($this->encoder->encodePassword($user, 'admin@admin.com'));
+        // persis admin
+        $manager->persist($user);
         // ------------------------------------------------------------ \\
         // ----------------------------------Initialize FAKER ----------\\
         // ------------------------------------------------------------- \\        

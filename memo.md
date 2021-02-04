@@ -290,3 +290,84 @@ class PropertySearchType extends AbstractType
     }
 }
 ```
+
+### Gestion des options
+
+Chercher les biens en fonction des tags: près de la mere, appart avec ascenseur ...
+
+Il faut une créer une entité pour les options qui sera lié aux propriétés
+
+```zsh
+❯ php bin/console make:entity Option
+
+ created: src/Entity/Option.php
+ created: src/Repository/OptionRepository.php
+
+ Entity generated! Now let's add some fields!
+ You can always add more fields later manually or by re-running this command.
+
+ New property name (press <return> to stop adding fields):
+ > name
+
+ Field type (enter ? to see all types) [string]:
+ >
+
+ Field length [255]:
+ >
+
+ Can this field be null in the database (nullable) (yes/no) [no]:
+ >
+
+ updated: src/Entity/Option.php
+
+ Add another property? Enter the property name (or press <return> to stop adding fields):
+ > properties
+
+ Field type (enter ? to see all types) [string]:
+ > relation
+
+ What class should this entity be related to?:
+ > Property
+
+What type of relationship is this?
+ ------------ ----------------------------------------------------------------------
+  Type         Description
+ ------------ ----------------------------------------------------------------------
+  ManyToOne    Each Option relates to (has) one Property.
+               Each Property can relate to (can have) many Option objects
+
+  OneToMany    Each Option can relate to (can have) many Property objects.
+               Each Property relates to (has) one Option
+
+  ManyToMany   Each Option can relate to (can have) many Property objects.
+               Each Property can also relate to (can also have) many Option objects
+
+  OneToOne     Each Option relates to (has) exactly one Property.
+               Each Property also relates to (has) exactly one Option.
+ ------------ ----------------------------------------------------------------------
+
+ Relation type? [ManyToOne, OneToMany, ManyToMany, OneToOne]:
+ > ManyToMany
+
+ Do you want to add a new property to Property so that you can access/update Option objects from it - e.g. $property->getOptions()? (yes/no) [yes]:
+ > yes
+
+ A new property will also be added to the Property class so that you can access the related Option objects from it.
+
+ New field name inside Property [options]:
+ >
+
+ updated: src/Entity/Option.php
+ updated: src/Entity/Property.php
+
+ Add another property? Enter the property name (or press <return> to stop adding fields):
+ >
+
+
+
+  Success!
+
+
+ Next: When you're ready, create a migration with php bin/console make:migration
+
+```

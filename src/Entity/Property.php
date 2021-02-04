@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\PropertyRepository;
 use Cocur\Slugify\Slugify;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 // Validation
@@ -130,6 +132,11 @@ class Property
      */
     public $heat;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Option::class, mappedBy="properties")
+     */
+    private $options;
+
 
 
     public function __construct()
@@ -139,6 +146,7 @@ class Property
 
         // set default value of sold to false
         $this->sold = false;
+        $this->options = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -319,6 +327,33 @@ class Property
     public function setHeatType(?Heat $heat): self
     {
         $this->heat = $heat;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Option[]
+     */
+    public function getOptions(): Collection
+    {
+        return $this->options;
+    }
+
+    public function addOption(Option $option): self
+    {
+        if (!$this->options->contains($option)) {
+            $this->options[] = $option;
+            $option->addProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOption(Option $option): self
+    {
+        if ($this->options->removeElement($option)) {
+            $option->removeProperty($this);
+        }
 
         return $this;
     }
