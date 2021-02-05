@@ -26,7 +26,8 @@
 						<td>{{property.id}}</td>
 						<td>{{property.title}}</td>
 						<td>
-							<a href="{{path('admin.property.edit',{id: property.id, statue:'edit'})}}" class="btn btn-secondary">Éditer</a>
+							<a href="{{path('property.show',{id: property.id, slug:property.slug})}}" class="btn btn-secondary">Voir</a>
+							<a href="{{path('admin.property.edit',{id: property.id})}}" class="btn btn-secondary">Éditer</a>
 							<a href="{{path('admin.property.delete',{id: property.id})}}" class="btn btn-danger">Supprimer</a>
 
 						</td>

@@ -297,13 +297,13 @@ Chercher les biens en fonction des tags: près de la mere, appart avec ascenseur
 
 Il faut une créer une entité pour les options qui sera lié aux propriétés
 
-```zsh
+```bash
 ❯ php bin/console make:entity Option
 
  created: src/Entity/Option.php
  created: src/Repository/OptionRepository.php
 
- Entity generated! Now let's add some fields!
+ Entity generated! Now let\'s add some fields!
  You can always add more fields later manually or by re-running this command.
 
  New property name (press <return> to stop adding fields):
@@ -368,6 +368,7 @@ What type of relationship is this?
   Success!
 
 
- Next: When you're ready, create a migration with php bin/console make:migration
-
+ Next: When you\'re ready, create a migration with php bin/console make:migration
 ```
+
+#### Création du CRUD pour Option

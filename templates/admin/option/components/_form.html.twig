@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title  %}
+	Éditer |
+	{{option.name}}
+{% endblock %}
+
+
+{% block body %}
+	<div class="container mt-4">
+		<h1>
+			{% block bigTitle %}
+				Éditer les biens
+			{% endblock %}
+		</h1>
+
+		{{form_start(form)}}
+
+		<div class="row">
+			<div class="col-md-4">{{form_row(form.name)}}</div>
+		</div>
+
+		{{form_widget(form)}}
+		<button class="btn btn-primary">
+			{% block createEdite %}
+				A DEFINIR
+			{% endblock %}
+		</button>
+		{{form_end(form)}}
+	</div>
+{% endblock %}

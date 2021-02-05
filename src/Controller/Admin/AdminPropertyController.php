@@ -30,6 +30,7 @@ class AdminPropertyController extends AbstractController
 
     /**
      * @Route("/admin/properties", name="admin.property.index")
+     * @Route("/admin/", name="admin.property.index")
      */
     public function index()
     {

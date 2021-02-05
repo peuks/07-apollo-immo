@@ -26,13 +26,23 @@ class AppFixtures extends Fixture
         // ----------------------------------Initialize ADMIN ----------\\
         // ------------------------------------------------------------- \\        
 
-        // Création d'un admin
-        $user = new User();
-        $user->setEmail("admin@admin.com")
+        $admin = new User();
+        $admin->setEmail("admin@admin.com")
             ->setRoles(['ROLE_ADMIN'])
-            ->setPassword($this->encoder->encodePassword($user, 'admin@admin.com'));
+            ->setPassword($this->encoder->encodePassword($admin, 'password'));
+        // persis admin
+        $manager->persist($admin);
+        // ------------------------------------------------------------ \\
+        // ----------------------------------Initialize USER -----------\\
+        // ------------------------------------------------------------- \\        
+
+        $user = new User();
+        $user->setEmail("user@user.com")
+            ->setRoles(['ROLE_USER'])
+            ->setPassword($this->encoder->encodePassword($user, 'password'));
         // persis admin
         $manager->persist($user);
+
         // ------------------------------------------------------------ \\
         // ----------------------------------Initialize FAKER ----------\\
         // ------------------------------------------------------------- \\        

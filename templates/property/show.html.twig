@@ -66,6 +66,20 @@
 			</div>
 			<div class="col-md-4">
 				<h2>Spécificités</h2>
+				<table class="table-striped">
+					{% for option in property.options %}
+						<pre>
+						{{ dump(option) }}
+					</pre>
+					{% endfor %}
+
+					<tr>
+						<td>Surface Habitable</td>
+						<td>{{property.surface}}
+							m²</td>
+					</tr>
+				</table>
+
 			</div>
 		</div>
 

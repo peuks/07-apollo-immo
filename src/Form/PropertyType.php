@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Heat;
+use App\Entity\Option;
 use App\Entity\Property;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -42,6 +43,12 @@ class PropertyType extends AbstractType
                 'placeholder' => '--Choisir un Chauffage--',
                 'class' => Heat::class,
                 // 'choice_label' => 'name'
+
+            ])
+            ->add('options', EntityType::class, [
+                'class' => Option::class,
+                'choice_label' => 'name',
+                'multiple' => true,
 
             ]);
     }
