@@ -525,4 +525,121 @@ Si je veux avoir la propriété sur Property il faut donc
     * Revenir sur Propriété et insérer une ligne options
     * Définir options en relation avec Option
 
-## Select 2 js
+### Modification SearchType
+
+Ici on rajoute une ligne pour les options
+
+```php
+<?php
+
+namespace App\Form;
+
+use App\Entity\Option;
+use App\Entity\PropertySearch;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class PropertySearchType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('maxPrice', IntegerType::class, [
+                'required' => false,
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Budget Maximal'
+                ]
+            ])
+            ->add('minSurface', IntegerType::class, [
+                'required' => false,
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Surface Minimale'
+                ]
+            ])
+            ->add('options', EntityType::class, [
+                'required' => false,
+                'label' => false,
+                'class' => Option::class,
+                'choice_label' => 'name',
+                'multiple' => true
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => PropertySearch::class,
+            // Research must be done with get method
+            'method' => 'get',
+            // We don't need a token for a research
+            'csrf_protection' => false
+        ]);
+    }
+    public function getBlockPrefix()
+    {
+        // Ne retien retourner comme prefix dans l'url
+        // Avant https://localhost:8000/biens?property_search%5BminSurface%5D=&property_search%5BmaxPrice%5D=15
+        // Après https://localhost:8000/biens?minSurface=11&maxPrice=16
+        return '';
+    }
+}
+
+```
+
+### Modification SearchRepository
+
+Il faut rajouter getter and setter pour récupérer les options
+
+```php
+/**
+     * Get the value of options
+     *
+     * @return  ArrayCollection
+     * Will return an empty ArrayCollection getOptions is null
+     */
+    public function getOptions()
+    {
+        return ($this->options === null) ?  new ArrayCollection : $this->options;
+    }
+```
+
+### Modification du repository
+
+```php
+    public function findAllAvailableQuery(PropertySearch $search): Query
+    {
+        $query = $this->findVisibleQuery();
+
+        if ($search->getMaxPrice()) {
+            $query = $query
+                ->andWhere('p.price <= :maxprice')
+                ->setParameter('maxprice', $search->getMaxPrice());
+        }
+
+        if ($search->getMinSurface()) {
+
+            $query = $query
+                ->andWhere('p.surface >= :minsurface')
+                ->setParameter('minsurface', $search->getMinSurface());
+        }
+        if ($search->getOptions()->count() > 0) {
+            $key = 0;
+            foreach ($search->getOptions() as $key => $option) {
+                $key++;
+                $query = $query
+                    ->andWhere(":option$key MEMBER OF p.options")
+                    ->setParameter("option$key", $option);
+            }
+        }
+        return $query->getQuery();
+
+        // On veut que la requeête pour la pagination
+        // ->getResult();
+    }
+```
