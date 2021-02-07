@@ -65,6 +65,7 @@ class PropertyController extends AbstractController
                 'slug' => $property->getSlug(),
             ], 301);
         }
+        // dd($property);
         // Send property to the view
         return $this->render('property/show.html.twig', [
             'current_menu' => 'properties',

@@ -26,7 +26,7 @@ class Option
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Property::class, inversedBy="options")
+     * @ORM\ManyToMany(targetEntity=Property::class, mappedBy="options")
      */
     private $properties;
 
@@ -74,5 +74,9 @@ class Option
         $this->properties->removeElement($property);
 
         return $this;
+    }
+    public function __toString()
+    {
+        return $this->getName();
     }
 }

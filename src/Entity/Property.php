@@ -131,6 +131,13 @@ class Property
      */
     public $heat;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Option::class, inversedBy="properties")
+     * 
+     */
+
+    private $options;
+
     public function __construct()
     {
         // set creat_at default value at actual time
@@ -138,6 +145,7 @@ class Property
 
         // set default value of sold to false
         $this->sold = false;
+        $this->options = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -320,5 +328,37 @@ class Property
         $this->heat = $heat;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Option[]
+     */
+    public function getOptions(): Collection
+    {
+        return $this->options;
+    }
+
+    public function addOption(Option $option): self
+    {
+        if (!$this->options->contains($option)) {
+            $this->options[] = $option;
+            $option->addProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOption(Option $option): self
+    {
+        if ($this->options->removeElement($option)) {
+            $option->removeProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getTitle();
     }
 }
