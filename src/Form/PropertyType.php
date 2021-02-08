@@ -8,6 +8,7 @@ use App\Entity\Property;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -33,11 +34,15 @@ class PropertyType extends AbstractType
             ->add('bedrooms')
             ->add('floor')
             ->add('city')
+            ->add('imageFile', FileType::class, [
+                'required' => false,
+            ])
             ->add('address')
             ->add('postale_code')
             ->add('sold', null, [])
             ->add('price')
             ->add('heat', EntityType::class, [
+                'required' => false,
                 'label' => 'Catégorie',
                 'attr' => ['class' => 'form-control'],
                 'placeholder' => '--Choisir un Chauffage--',

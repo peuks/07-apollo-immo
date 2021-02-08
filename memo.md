@@ -643,3 +643,696 @@ Il faut rajouter getter and setter pour récupérer les options
         // ->getResult();
     }
 ```
+
+## Gestion des photos
+
+```php
+❯ composer require vich/uploader-bundle
+```
+
+**vich_uploader.yaml**
+
+```yaml
+vich_uploader:
+  db_driver: orm
+
+  mappings:
+    property_image:
+      uri_prefix: /images/properties
+         upload_destination: '%kernel.project_dir%/public/images/properties'
+```
+
+**Property.php | entity**
+
+```php
+<?php
+
+namespace App\Entity;
+
+use Cocur\Slugify\Slugify;
+use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PropertyRepository;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+
+// Validation
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\Unique;
+
+// Upload
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
+
+
+
+
+/**
+ * @ORM\Entity(repositoryClass=PropertyRepository::class)
+ * @Vich\Uploadable
+ * @UniqueEntity("title")
+ */
+
+class Property
+{
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     * @Assert\Length(
+     * min = 3,
+     * )
+     */
+    private $title;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     */
+    public $slug;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $description;
+
+    /**
+     * @ORM\Column(type="integer");
+     * @Assert\Range(
+     *      min = 10,
+     *      max = 1000,
+     *      notInRangeMessage = "La surface doit être comprise entre {{ min }}m² et {{ max }}m²"
+     * )
+     */
+    private $surface;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\Range(
+     * min = 1,
+     * max = 100,
+     * minMessage= "Vous devez renseigner au minimum {{ min }} pièce",
+     * maxMessage= "Vous devez renseigner au maximum {{ max }} pièce",
+     * )
+     */
+    private $rooms;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\Range(
+     * min = 1,
+     * max = 100,
+     * minMessage= "Vous devez renseigner au minimum {{ min }} chambre",
+     * maxMessage= "Vous ne pouvez renseigner maximum {{ max }} chambres",
+     * )
+     */
+    private $bedrooms;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\Range(
+     * min = 0,
+     * max = 20,
+     * minMessage= "L'étage ne peut pas négatif",
+     * maxMessage= "L'étage ne peut pas être supérieur à 10",
+     * )
+     */
+    private $floor;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 50,
+     *      minMessage = "La ville ne peut contenir moins de  {{ limit }} caractères.",
+     *      maxMessage = "La ville ne peut contenir plus de  {{ limit }} caractères.",
+     * )
+     */
+    private $city;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $address;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\Regex("/^[0-9]{5}$/")
+     */
+    private $postale_code;
+
+    /**
+     * @ORM\Column(type="boolean", options ={"default":false}))
+     */
+    private $sold;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created_at;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $price;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Heat::class, inversedBy="properties")
+     */
+    public $heat;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Option::class, inversedBy="properties")
+     *
+     */
+
+    private $options;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255)
+     *
+     */
+    private $filename;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="property_image", fileNameProperty="fileName")
+     */
+    private $imageFile;
+
+    /**
+     * @ORM\Column(type="datetime")
+     *
+     * @var \DateTimeInterface|null
+     */
+    private $updatedAt;
+
+    public function __construct()
+    {
+        // set creat_at default value at actual time
+        $this->created_at = new \DateTime();
+
+        // set default value of sold to false
+        $this->sold = false;
+        $this->options = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+
+
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getSurface(): ?int
+    {
+        return $this->surface;
+    }
+
+    public function setSurface(int $surface): self
+    {
+        $this->surface = $surface;
+
+        return $this;
+    }
+
+    public function getRooms(): ?int
+    {
+        return $this->rooms;
+    }
+
+    public function setRooms(int $rooms): self
+    {
+        $this->rooms = $rooms;
+
+        return $this;
+    }
+
+    public function getBedrooms(): ?int
+    {
+        return $this->bedrooms;
+    }
+
+    public function setBedrooms(int $bedrooms): self
+    {
+        $this->bedrooms = $bedrooms;
+
+        return $this;
+    }
+
+    public function getFloor(): ?int
+    {
+        return $this->floor;
+    }
+
+    public function setFloor(int $floor): self
+    {
+        $this->floor = $floor;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getPostaleCode(): ?int
+    {
+        return $this->postale_code;
+    }
+
+    public function setPostaleCode(int $postale_code): self
+    {
+        $this->postale_code = $postale_code;
+
+        return $this;
+    }
+
+    public function getSold(): ?bool
+    {
+        return $this->sold;
+    }
+
+    public function setSold(bool $sold): self
+    {
+        $this->sold = $sold;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(int $price): self
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getFormattedPrice(): string
+    {
+        return number_format($this->price, 0, '', ' ');
+    }
+
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = (new Slugify())->slugify(strtolower($slug));
+
+        return $this;
+    }
+
+    public function getHeatType(): string
+    {
+        return $this->heat->getType();
+    }
+
+    public function setHeatType(?Heat $heat): self
+    {
+        $this->heat = $heat;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Option[]
+     */
+    public function getOptions(): Collection
+    {
+        return $this->options;
+    }
+
+    public function addOption(Option $option): self
+    {
+        if (!$this->options->contains($option)) {
+            $this->options[] = $option;
+            $option->addProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOption(Option $option): self
+    {
+        if ($this->options->removeElement($option)) {
+            $option->removeProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getTitle();
+    }
+
+    /**
+     * Get the value of fileName
+     *
+     * @return  string|null
+     */
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    /**
+     * Set the value of fileName
+     *
+     * @param  string|null  $fileName
+     *
+     * @return  self
+     */
+    public function setFileName(?string $fileName): Property
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of imageFile
+     *
+     * @return  File|null
+     */
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+     * of 'UploadedFile' is injected into this setter to trigger the update. If this
+     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+     * must be able to accept an instance of 'File' as the bundle will inject one here
+     * during Doctrine hydration.
+     *
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+}
+
+```
+
+```php
+❯ php bin/console make:migration
+```
+
+### Ajouter un champ pour les photos
+
+```twig
+{% extends 'base.html.twig' %}
+
+{% block title  %}
+	Éditer |
+	{{property.title}}
+{% endblock %}
+
+
+{% block body %}
+	<div class="container mt-4">
+		<h1>
+			{% block bigTitle %}
+				Éditer les biens
+			{% endblock %}
+		</h1>
+
+		{{form_start(form)}}
+
+		<div class="row">
+			<div class="col-md-4">{{form_row(form.title)}}</div>
+			<div class="col-md-4">{{form_row(form.surface)}}</div>
+			<div class="col-md-4">{{form_row(form.price)}}</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-3">{{form_row(form.rooms)}}</div>
+			<div class="col-md-3">{{form_row(form.bedrooms)}}</div>
+			<div class="col-md-3">{{form_row(form.heat)}}</div>
+			<div class="col-md-3">{{form_row(form.floor)}}</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2">{{form_row(form.imageFile)}}</div>
+			<div class="col-md-3">{{form_row(form.address)}}</div>
+			<div class="col-md-2">{{form_row(form.city)}}</div>
+			<div class="col-md-3">{{form_row(form.postale_code)}}</div>
+			<div class="col-md-2">{{form_row(form.sold)}}</div>
+
+		</div>
+
+
+		{{form_row(form.description)}}
+		<div class="col-md-6"></div>
+
+
+		{{form_rest(form)}}
+		<button class="btn btn-primary">
+			{% block createEdite %}
+				A DEFINIR
+			{% endblock %}
+		</button>
+		{{form_end(form)}}
+	</div>
+{% endblock %}
+```
+
+### show
+
+```twig
+{% if property.filename %}
+    <img src="{{vich_uploader_asset(property,"imageFile")}}" alt="" class="card-img-top" style="width: 100%;height:auto;">
+
+{% endif %}
+```
+
+### Redimensionner les images
+
+```php
+composer require liip/imagine-bundle
+```
+
+### configuration du filtre de redimentionnement
+
+```yaml
+# See dos how to configure the bundle: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
+liip_imagine:
+  # valid drivers options include "gd" or "gmagick" or "imagick"
+  driver: "gd"
+
+  filter_sets:
+    thumb:
+      quality: 75
+      filters:
+        thumbnail:
+          seize: [360, 230]
+          mode: outbound
+```
+
+### Supression du cache
+
+Il est possible d'utiliser doctrine avec des évènements
+
+#### Création du service
+
+```zsh
+mkdir src/Listener/;
+touch  src/Listener/ImageCacheSubscriber.php;
+```
+
+```php
+<?php
+
+namespace App\Listener;
+
+use App\Entity\Property;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Mapping\PreRemove;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
+
+class ImageCacheSubscriber implements EventSubscriber
+{
+    /**
+     * @var CacheManager
+     */
+    private $cacheManager;
+
+    /**
+     *
+     * @var UploadHelper
+     */
+    private $uploaderHelper;
+
+    public function __construct(CacheManager $cacheManager, UploaderHelper $uploaderHelper)
+    {
+        $this->cacheManager = $cacheManager;
+        $this->uploaderHelper = $uploaderHelper;
+    }
+
+    // TODO: implement getSubscriberEvents() method
+    // Les evenements à écouter
+    public function getSubscribedEvents()
+    {
+
+        return [
+            'preRemove',
+            'preUpdate'
+        ];
+    }
+
+    /**
+     *
+     * @return void
+     */
+    public function preRemove(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+
+        if (!$entity instanceof Property) {
+            return;
+        }
+
+        $this->cacheManager->remove($this->uploaderHelper->asset($entity, 'imageFile'));
+    }
+
+    /**
+     * @return void
+     */
+    public function preUpdate(PreUpdateEventArgs $args)
+    {
+        $entity = $args->getEntity();
+
+        if (!$entity instanceof Property) {
+            return;
+        }
+        if ($entity->getImageFile() instanceof UploadedFile) {
+            $this->cacheManager->remove($this->uploaderHelper->asset($entity, 'imageFile'));
+        }
+    }
+}
+
+```
+
+#### Activer le service dans service.yaml
+
+```yaml
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  # makes classes in src/ available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+  App\:
+    resource: "../src/"
+    exclude:
+      - "../src/DependencyInjection/"
+      - "../src/Entity/"
+      - "../src/Kernel.php"
+      - "../src/Tests/"
+
+  # controllers are imported separately to make sure services can be injected
+  # as action arguments even if you don't extend any base controller class
+  App\Controller\:
+    resource: "../src/Controller/"
+    tags: ["controller.service_arguments"]
+
+  # add more service definitions when explicit configuration is needed
+  # please note that last definitions always *replace* previous ones
+  App\Listener\ImageCacheSubscriber:
+    tags:
+      name: doctrine.event_subscriber
+```

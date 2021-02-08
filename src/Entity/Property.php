@@ -2,21 +2,31 @@
 
 namespace App\Entity;
 
-use App\Repository\PropertyRepository;
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PropertyRepository;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 // Validation
-use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints\Unique;
+
+// Upload
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 
 
 /**
  * @ORM\Entity(repositoryClass=PropertyRepository::class)
+ * @Vich\Uploadable
+ * @UniqueEntity("title") 
  */
+
 class Property
 {
     /**
@@ -50,8 +60,7 @@ class Property
      * @Assert\Range(
      *      min = 10,
      *      max = 1000,
-     * 
-     *      notInRangeMessage = "La surface doit être comprise entre {{ min }}m² et {{ max }}m²",
+     *      notInRangeMessage = "La surface doit être comprise entre {{ min }}m² et {{ max }}m²"
      * )
      */
     private $surface;
@@ -137,6 +146,31 @@ class Property
      */
 
     private $options;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255)
+     * 
+     */
+    private $filename;
+
+    /**
+     * @var File|null
+     * @Assert\File(maxSize="3M")
+     * @Assert\Image(
+     * mimeTypes="image/jpeg",
+     * mimeTypesMessage="Seul le format Jpeg est autorisé"
+     * )
+     * @Vich\UploadableField(mapping="property_image", fileNameProperty="filename")
+     */
+    private $imageFile;
+
+    /**
+     * @ORM\Column(type="datetime")
+     *
+     * @var \DateTimeInterface|null
+     */
+    private $updatedAt;
 
     public function __construct()
     {
@@ -360,5 +394,59 @@ class Property
     public function __toString()
     {
         return $this->getTitle();
+    }
+
+    /**
+     * Get the value of fileName
+     *
+     * @return  string|null
+     */
+    public function getFileName(): ?string
+    {
+        return $this->filename;
+    }
+
+    /**
+     * Set the value of fileName
+     *
+     * @param  string|null  $fileName
+     *
+     * @return  self
+     */
+    public function setFileName(?string $filename): Property
+    {
+        $this->filename = $filename;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of imageFile
+     *
+     * @return  File|null
+     */
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+     * of 'UploadedFile' is injected into this setter to trigger the update. If this
+     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+     * must be able to accept an instance of 'File' as the bundle will inject one here
+     * during Doctrine hydration.
+     *
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 }

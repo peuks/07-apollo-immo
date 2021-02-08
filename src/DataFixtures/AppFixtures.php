@@ -77,7 +77,7 @@ class AppFixtures extends Fixture
         // ------------------------Creat Properties --------------------\\
         // ------------------------------------------------------------- \\
 
-        for ($i = 0; $i < mt_rand(100, 300); $i++) {
+        for ($i = 0; $i < mt_rand(2, 5); $i++) {
             $property = new Property;
 
             $property->setTitle($faker->words(3, true))
