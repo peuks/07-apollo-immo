@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,9 +18,15 @@ class Article
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=255)
      */
     private $title;
+
+    /**
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
 
     /**
      * @ORM\Column(type="text")
@@ -30,14 +34,9 @@ class Article
     private $content;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Category::class, mappedBy="articles")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="articles")
      */
-    private $categories;
-
-    public function __construct()
-    {
-        $this->categories = new ArrayCollection();
-    }
+    private $user;
 
     public function getId(): ?int
     {
@@ -56,6 +55,18 @@ class Article
         return $this;
     }
 
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
     public function getContent(): ?string
     {
         return $this->content;
@@ -68,29 +79,14 @@ class Article
         return $this;
     }
 
-    /**
-     * @return Collection|Category[]
-     */
-    public function getCategories(): Collection
+    public function getUser(): ?User
     {
-        return $this->categories;
+        return $this->user;
     }
 
-    public function addCategory(Category $category): self
+    public function setUser(?User $user): self
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories[] = $category;
-            $category->addArticle($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCategory(Category $category): self
-    {
-        if ($this->categories->removeElement($category)) {
-            $category->removeArticle($this);
-        }
+        $this->user = $user;
 
         return $this;
     }

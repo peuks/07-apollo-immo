@@ -114,37 +114,37 @@ class AppFixtures extends Fixture
         // ----------------------------------Initialize Catégories -----\\
         // ------------------------------------------------------------- \\        
 
-        // Store heatType's Objects
-        $CategoriesArray = [];
+        // // Store heatType's Objects
+        // $CategoriesArray = [];
 
-        for ($i = 0; $i < 3; $i++) {
-            // Categories
-            $category = new Category;
-            $category->setTitle($faker->text(5));
+        // for ($i = 0; $i < 3; $i++) {
+        //     // Categories
+        //     $category = new Category;
+        //     $category->setTitle($faker->text(5));
 
-            // Store actual category in array
-            $CategoriesArray[] = $category;
-            // Persist actual category
-            $manager->persist($category);
-        }
+        //     // Store actual category in array
+        //     $CategoriesArray[] = $category;
+        //     // Persist actual category
+        //     $manager->persist($category);
+        // }
 
 
         // ------------------------------------------------------------ \\
         // ----------------------------------Initialize Articles - -----\\
         // ------------------------------------------------------------- \\   
-        for ($i = 0; $i < mt_rand(2, 30); $i++) {
-            $article = new Article;
+        // for ($i = 0; $i < mt_rand(2, 30); $i++) {
+        //     $article = new Article;
 
-            $article->setTitle($faker->word())
-                ->setContent(implode("", $faker->words(10)));
+        //     $article->setTitle($faker->word())
+        //         ->setContent(implode("", $faker->words(10)));
 
-            $manager->persist($article);
+        //     $manager->persist($article);
 
-            // Select a random category 
-            $currentCategory = $CategoriesArray[array_rand($CategoriesArray)];
+        //     // Select a random category 
+        //     $currentCategory = $CategoriesArray[array_rand($CategoriesArray)];
 
-            $article->addCategory($currentCategory);
-        }
+        //     $article->addCategory($currentCategory);
+        // }
         $manager->flush();
     }
 }
