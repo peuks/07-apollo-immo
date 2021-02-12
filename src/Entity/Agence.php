@@ -18,7 +18,7 @@ class Agence
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=100)
      */
     private $raison_sociale;
 
@@ -28,24 +28,39 @@ class Agence
     private $siret;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=50)
      */
     private $nom_commercial;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
+     */
+    private $adresse_postale;
+
+    /**
+     * @ORM\Column(type="string", length=20)
      */
     private $telephone;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=50)
      */
     private $mail;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=50)
      */
     private $responsable_agence;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Travailler::class, inversedBy="agency")
+     */
+    private $travailler;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Reseau::class, inversedBy="agence")
+     */
+    private $reseau;
 
     public function getId(): ?int
     {
@@ -88,24 +103,36 @@ class Agence
         return $this;
     }
 
-    public function getTelephone(): ?int
+    public function getAdressePostale(): ?string
+    {
+        return $this->adresse_postale;
+    }
+
+    public function setAdressePostale(string $adresse_postale): self
+    {
+        $this->adresse_postale = $adresse_postale;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
 
-    public function setTelephone(int $telephone): self
+    public function setTelephone(string $telephone): self
     {
         $this->telephone = $telephone;
 
         return $this;
     }
 
-    public function getMail(): ?int
+    public function getMail(): ?string
     {
         return $this->mail;
     }
 
-    public function setMail(int $mail): self
+    public function setMail(string $mail): self
     {
         $this->mail = $mail;
 
@@ -120,6 +147,30 @@ class Agence
     public function setResponsableAgence(string $responsable_agence): self
     {
         $this->responsable_agence = $responsable_agence;
+
+        return $this;
+    }
+
+    public function getTravailler(): ?Travailler
+    {
+        return $this->travailler;
+    }
+
+    public function setTravailler(?Travailler $travailler): self
+    {
+        $this->travailler = $travailler;
+
+        return $this;
+    }
+
+    public function getReseau(): ?Reseau
+    {
+        return $this->reseau;
+    }
+
+    public function setReseau(?Reseau $reseau): self
+    {
+        $this->reseau = $reseau;
 
         return $this;
     }

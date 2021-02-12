@@ -39,6 +39,22 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Agence::class, mappedBy="user")
+     */
+    private $agencies;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Travailler::class, mappedBy="user")
+     */
+    private $travaillers;
+
+    public function __construct()
+    {
+        $this->agencies = new ArrayCollection();
+        $this->travaillers = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -115,5 +131,62 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection|Agence[]
+     */
+    public function getAgencies(): Collection
+    {
+        return $this->agencies;
+    }
+
+    public function addAgency(Agence $agency): self
+    {
+        if (!$this->agencies->contains($agency)) {
+            $this->agencies[] = $agency;
+            $agency->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAgency(Agence $agency): self
+    {
+        if ($this->agencies->removeElement($agency)) {
+            $agency->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Travailler[]
+     */
+    public function getTravaillers(): Collection
+    {
+        return $this->travaillers;
+    }
+
+    public function addTravailler(Travailler $travailler): self
+    {
+        if (!$this->travaillers->contains($travailler)) {
+            $this->travaillers[] = $travailler;
+            $travailler->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTravailler(Travailler $travailler): self
+    {
+        if ($this->travaillers->removeElement($travailler)) {
+            // set the owning side to null (unless already changed)
+            if ($travailler->getUser() === $this) {
+                $travailler->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
