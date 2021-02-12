@@ -7,6 +7,7 @@ use Faker\Factory;
 use App\Entity\Heat;
 use App\Entity\User;
 use App\Entity\Category;
+use App\Entity\Option;
 use App\Entity\Property;
 use Cocur\Slugify\Slugify;
 use Doctrine\Persistence\ObjectManager;
@@ -37,12 +38,15 @@ class AppFixtures extends Fixture
         // ------------------------------------------------------------ \\
         // ----------------------------------Initialize USER -----------\\
         // ------------------------------------------------------------- \\        
-
+        $users = [];
         $user = new User();
         $user->setEmail("user@user.com")
             ->setRoles(['ROLE_USER'])
             ->setPassword($this->encoder->encodePassword($user, 'password'));
-        // persis admin
+
+        /** @var User */
+        $users[] = $user;
+        // persis user
         $manager->persist($user);
 
         // ------------------------------------------------------------ \\
@@ -76,6 +80,24 @@ class AppFixtures extends Fixture
         }
 
         // ------------------------------------------------------------ \\
+        // ----------------------------------Initialize Options --------\\
+        // ------------------------------------------------------------- \\
+        $optionsType = ["Balcon", "Ascenseur", "Piscine"];
+
+        $options = [];
+
+        foreach ($optionsType as $option) {
+            $agrement = new Option;
+            $agrement->setName($option);
+
+            // Add agrement to $options
+
+            $options[] = $agrement;
+
+            $manager->persist($agrement);
+        }
+
+        // ------------------------------------------------------------ \\
         // ------------------------Creat Properties --------------------\\
         // ------------------------------------------------------------- \\
 
@@ -106,9 +128,17 @@ class AppFixtures extends Fixture
             // Assign current  property to current heat
             $heatTypeArray[$currentHeat]->addProperty($property);
 
+            // ------------------------------------------------------------ \\
+            // ------------------------Set Options ------------------------\\
+            // ------------------------------------------------------------- \\
+            $property->addOption($faker->randomElement($options));
+
+            // Persist $property
             $manager->persist($property);
         }
 
+
+        // Création de 3 options 
 
         // ------------------------------------------------------------ \\
         // ----------------------------------Initialize Catégories -----\\
