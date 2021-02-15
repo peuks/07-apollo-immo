@@ -12,14 +12,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 // Validation
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints\Unique;
-
-// Upload
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use Symfony\Component\Validator\Constraints as Assert;
-
-
-
 
 /**
  * @ORM\Entity(repositoryClass=PropertyRepository::class)
@@ -172,6 +164,11 @@ class Property
      */
     private $updatedAt;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Image::class, mappedBy="properties", orphanRemoval=true)
+     */
+    private $images;
+
     public function __construct()
     {
         // set creat_at default value at actual time
@@ -180,6 +177,7 @@ class Property
         // set default value of sold to false
         $this->sold = false;
         $this->options = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -448,5 +446,35 @@ class Property
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = new \DateTimeImmutable();
         }
+    }
+
+    /**
+     * @return Collection|Image[]
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setProperties($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getProperties() === $this) {
+                $image->setProperties(null);
+            }
+        }
+
+        return $this;
     }
 }
