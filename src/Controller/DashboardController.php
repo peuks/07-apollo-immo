@@ -27,4 +27,10 @@ class DashboardController extends AbstractController
     {
         return $this->render('dashboard/apply.index.html.twig', []);
     }
+
+    #[Route('/deposit', name: 'deposit')]
+    public function addDeposit(): Response
+    {
+        return $this->render('dashboard/deposit.index.html.twig', []);
+    }
 }

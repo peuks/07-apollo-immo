@@ -176,6 +176,11 @@ class Property
      */
     private $images;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Candidater::class, mappedBy="property")
+     */
+    private $candidatures;
+
     public function __construct()
     {
         // set creat_at default value at actual time
@@ -185,6 +190,7 @@ class Property
         $this->sold = false;
         $this->options = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->candidatures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -479,6 +485,36 @@ class Property
             // set the owning side to null (unless already changed)
             if ($image->getProperties() === $this) {
                 $image->setProperties(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Candidater[]
+     */
+    public function getCandidatures(): Collection
+    {
+        return $this->candidatures;
+    }
+
+    public function addCandidature(Candidater $candidature): self
+    {
+        if (!$this->candidatures->contains($candidature)) {
+            $this->candidatures[] = $candidature;
+            $candidature->setProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCandidature(Candidater $candidature): self
+    {
+        if ($this->candidatures->removeElement($candidature)) {
+            // set the owning side to null (unless already changed)
+            if ($candidature->getProperty() === $this) {
+                $candidature->setProperty(null);
             }
         }
 

@@ -16,15 +16,15 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
-    protected  $encoder;
+    protected  $encoder, $faker;
 
     public function __construct(UserPasswordEncoderInterface $encoder)
     {
         $this->encoder = $encoder;
+        $this->faker = Factory::create("fr_FR");
     }
     public function load(ObjectManager $manager)
     {
-
         // ------------------------------------------------------------ \\
         // ----------------------------------Initialize ADMIN ----------\\
         // ------------------------------------------------------------- \\        
@@ -42,6 +42,8 @@ class AppFixtures extends Fixture
         $user = new User();
         $user->setEmail("user@user.com")
             ->setRoles(['ROLE_USER'])
+            ->setFirstName($this->faker->firstName())
+            ->setLastName($this->faker->lastName())
             ->setPassword($this->encoder->encodePassword($user, 'password'));
 
         /** @var User */

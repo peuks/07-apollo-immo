@@ -49,10 +49,31 @@ class User implements UserInterface
      */
     private $travaillers;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $first_name;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $last_name;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Dossier::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $dossier;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Candidater::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $candidatures;
+
     public function __construct()
     {
         $this->agencies = new ArrayCollection();
         $this->travaillers = new ArrayCollection();
+        $this->candidatures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -184,6 +205,82 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($travailler->getUser() === $this) {
                 $travailler->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getUsername();
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->first_name;
+    }
+
+    public function setFirstName(?string $first_name): self
+    {
+        $this->first_name = $first_name;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->last_name;
+    }
+
+    public function setLastName(?string $last_name): self
+    {
+        $this->last_name = $last_name;
+
+        return $this;
+    }
+
+    public function getDossier(): ?Dossier
+    {
+        return $this->dossier;
+    }
+
+    public function setDossier(Dossier $dossier): self
+    {
+        // set the owning side of the relation if necessary
+        if ($dossier->getUser() !== $this) {
+            $dossier->setUser($this);
+        }
+
+        $this->dossier = $dossier;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Candidater[]
+     */
+    public function getCandidatures(): Collection
+    {
+        return $this->candidatures;
+    }
+
+    public function addCandidature(Candidater $candidature): self
+    {
+        if (!$this->candidatures->contains($candidature)) {
+            $this->candidatures[] = $candidature;
+            $candidature->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCandidature(Candidater $candidature): self
+    {
+        if ($this->candidatures->removeElement($candidature)) {
+            // set the owning side to null (unless already changed)
+            if ($candidature->getUser() === $this) {
+                $candidature->setUser(null);
             }
         }
 
