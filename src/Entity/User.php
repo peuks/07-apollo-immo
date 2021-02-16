@@ -69,11 +69,17 @@ class User implements UserInterface
      */
     private $candidatures;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Property::class, mappedBy="proprietaire", orphanRemoval=true)
+     */
+    private $properties;
+
     public function __construct()
     {
         $this->agencies = new ArrayCollection();
         $this->travaillers = new ArrayCollection();
         $this->candidatures = new ArrayCollection();
+        $this->properties = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -281,6 +287,36 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($candidature->getUser() === $this) {
                 $candidature->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Property[]
+     */
+    public function getProperties(): Collection
+    {
+        return $this->properties;
+    }
+
+    public function addProperty(Property $property): self
+    {
+        if (!$this->properties->contains($property)) {
+            $this->properties[] = $property;
+            $property->setProprietaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProperty(Property $property): self
+    {
+        if ($this->properties->removeElement($property)) {
+            // set the owning side to null (unless already changed)
+            if ($property->getProprietaire() === $this) {
+                $property->setProprietaire(null);
             }
         }
 
