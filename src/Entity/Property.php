@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-
 // Validation
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints\Unique;
@@ -25,7 +24,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @Vich\Uploadable
  * @UniqueEntity("title") 
  */
-
 class Property
 {
     /**
@@ -139,12 +137,6 @@ class Property
      */
     public $heat;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Option::class, inversedBy="properties")
-     * 
-     */
-
-    private $options;
 
     /**
      * @var string|null
@@ -181,6 +173,17 @@ class Property
      */
     private $candidatures;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="properties")
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Specificity::class, mappedBy="properties")
+     */
+    private $specificities;
+
+
     public function __construct()
     {
         // set creat_at default value at actual time
@@ -188,9 +191,9 @@ class Property
 
         // set default value of sold to false
         $this->sold = false;
-        $this->options = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->candidatures = new ArrayCollection();
+        $this->specificities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -375,32 +378,7 @@ class Property
         return $this;
     }
 
-    /**
-     * @return Collection|Option[]
-     */
-    public function getOptions(): Collection
-    {
-        return $this->options;
-    }
 
-    public function addOption(Option $option): self
-    {
-        if (!$this->options->contains($option)) {
-            $this->options[] = $option;
-            $option->addProperty($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOption(Option $option): self
-    {
-        if ($this->options->removeElement($option)) {
-            $option->removeProperty($this);
-        }
-
-        return $this;
-    }
 
     public function __toString()
     {
@@ -516,6 +494,45 @@ class Property
             if ($candidature->getProperty() === $this) {
                 $candidature->setProperty(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Specificity[]
+     */
+    public function getSpecificities(): Collection
+    {
+        return $this->specificities;
+    }
+
+    public function addSpecificity(Specificity $specificity): self
+    {
+        if (!$this->specificities->contains($specificity)) {
+            $this->specificities[] = $specificity;
+            $specificity->addProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecificity(Specificity $specificity): self
+    {
+        if ($this->specificities->removeElement($specificity)) {
+            $specificity->removeProperty($this);
         }
 
         return $this;

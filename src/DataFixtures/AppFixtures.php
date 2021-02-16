@@ -7,7 +7,7 @@ use Faker\Factory;
 use App\Entity\Heat;
 use App\Entity\User;
 use App\Entity\Category;
-use App\Entity\Option;
+use App\Entity\Specificity;
 use App\Entity\Property;
 use Cocur\Slugify\Slugify;
 use Doctrine\Persistence\ObjectManager;
@@ -86,17 +86,17 @@ class AppFixtures extends Fixture
         // ------------------------------------------------------------- \\
         $optionsType = ["Balcon", "Ascenseur", "Piscine"];
 
-        $options = [];
+        $specificities = [];
 
-        foreach ($optionsType as $option) {
-            $agrement = new Option;
-            $agrement->setName($option);
+        foreach ($optionsType as $i) {
+            $specificity = new Specificity;
+            $specificity->setName($i);
 
-            // Add agrement to $options
+            // Add specificity to $specificities
 
-            $options[] = $agrement;
+            $specificities[] = $specificity;
 
-            $manager->persist($agrement);
+            $manager->persist($specificity);
         }
 
         // ------------------------------------------------------------ \\
@@ -133,7 +133,7 @@ class AppFixtures extends Fixture
             // ------------------------------------------------------------ \\
             // ------------------------Set Options ------------------------\\
             // ------------------------------------------------------------- \\
-            $property->addOption($faker->randomElement($options));
+            $property->addSpecificity($faker->randomElement($specificities));
 
             // Persist $property
             $manager->persist($property);

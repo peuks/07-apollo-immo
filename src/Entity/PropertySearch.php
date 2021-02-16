@@ -26,10 +26,10 @@ class PropertySearch
     /**
      * @var ArrayCollection
      */
-    private $options;
+    private $specificity;
     public function __construct()
     {
-        $this->option = new ArrayCollection();
+        $this->specificity = new ArrayCollection();
     }
     /**
      * Get la variable peut être un entier ou null si aucune recherche n'est faite
@@ -80,26 +80,26 @@ class PropertySearch
     }
 
     /**
-     * Get the value of options
+     * Get the value of specificities
      *
      * @return  ArrayCollection
-     * Will return an empty ArrayCollection getOptions is null
+     * Will return an empty ArrayCollection getSpecificities is null
      */
-    public function getOptions()
+    public function getSpecificities()
     {
-        return ($this->options === null) ?  new ArrayCollection : $this->options;
+        return ($this->specificity === null) ?  new ArrayCollection : $this->specificity;
     }
 
     /**
-     * Set the value of options
+     * Set the value of specificities
      *
-     * @param  ArrayCollection  $options
+     * @param  ArrayCollection  $specificities
      *
      * @return  self
      */
-    public function setOptions(ArrayCollection $options)
+    public function setSpecificities(ArrayCollection $specificities)
     {
-        $this->options = $options;
+        $this->specificities = $specificities;
 
         return $this;
     }

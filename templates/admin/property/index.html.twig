@@ -4,7 +4,7 @@
 
 {% block body %}
 	<div class="container mt-4">
-		<h1>Gérer les biens</h1>
+		<h1>Gérer les Agréments</h1>
 		{% for message in app.flashes('sucess') %}
 			<div class="alert alert-success">
 				{{message}}
@@ -15,20 +15,18 @@
 			<thead>
 				<tr>
 					<th>ID</th>
-					<th>Titre</th>
+					<th>Nom</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for property in properties %}
-
+				{% for specificity in specificities %}
 					<tr>
-						<td>{{property.id}}</td>
-						<td>{{property.title}}</td>
+						<td>{{specificity.id}}</td>
+						<td>{{specificity.name}}</td>
 						<td>
-							<a href="{{path('property.show',{id: property.id, slug:property.slug})}}" class="btn btn-secondary">Voir</a>
-							<a href="{{path('admin.property.edit',{id: property.id})}}" class="btn btn-secondary">Éditer</a>
-							<a href="{{path('admin.property.delete',{id: property.id})}}" class="btn btn-danger">Supprimer</a>
+							<a href="{{path('admin.specificity.edit',{id: specificity.id})}}" class="btn btn-danger">Supprimer</a>
+							<a href="{{path('admin.specificity.delete',{id: specificity.id})}}" class="btn btn-danger">Supprimer</a>
 
 						</td>
 					</tr>
@@ -36,7 +34,7 @@
 			</tbody>
 		</table>
 
-		<a href="{{path('admin.property.create')}}" class="btn btn-secondary">Nouveau</a>
+		<a href="{{path('admin.specificity.create')}}" class="btn btn-secondary">Nouveau</a>
 
 	</div>
 

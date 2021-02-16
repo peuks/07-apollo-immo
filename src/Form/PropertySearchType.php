@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Option;
 use App\Entity\PropertySearch;
+use App\Entity\Specificity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -30,10 +30,10 @@ class PropertySearchType extends AbstractType
                     'placeholder' => 'Surface Minimale'
                 ]
             ])
-            ->add('options', EntityType::class, [
+            ->add('specificities', EntityType::class, [
                 'required' => false,
                 'label' => false,
-                'class' => Option::class,
+                'class' => Specificity::class,
                 'choice_label' => 'name',
                 'multiple' => true
             ]);

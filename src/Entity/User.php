@@ -40,16 +40,6 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Agence::class, mappedBy="user")
-     */
-    private $agencies;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Travailler::class, mappedBy="user")
-     */
-    private $travaillers;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $first_name;
@@ -70,14 +60,14 @@ class User implements UserInterface
     private $candidatures;
 
     /**
-     * @ORM\OneToMany(targetEntity=Property::class, mappedBy="proprietaire", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Property::class, mappedBy="user")
      */
     private $properties;
 
+
+
     public function __construct()
     {
-        $this->agencies = new ArrayCollection();
-        $this->travaillers = new ArrayCollection();
         $this->candidatures = new ArrayCollection();
         $this->properties = new ArrayCollection();
     }
@@ -160,67 +150,6 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    /**
-     * @return Collection|Agence[]
-     */
-    public function getAgencies(): Collection
-    {
-        return $this->agencies;
-    }
-
-    public function addAgency(Agence $agency): self
-    {
-        if (!$this->agencies->contains($agency)) {
-            $this->agencies[] = $agency;
-            $agency->addUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAgency(Agence $agency): self
-    {
-        if ($this->agencies->removeElement($agency)) {
-            $agency->removeUser($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Travailler[]
-     */
-    public function getTravaillers(): Collection
-    {
-        return $this->travaillers;
-    }
-
-    public function addTravailler(Travailler $travailler): self
-    {
-        if (!$this->travaillers->contains($travailler)) {
-            $this->travaillers[] = $travailler;
-            $travailler->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTravailler(Travailler $travailler): self
-    {
-        if ($this->travaillers->removeElement($travailler)) {
-            // set the owning side to null (unless already changed)
-            if ($travailler->getUser() === $this) {
-                $travailler->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->getUsername();
-    }
 
     public function getFirstName(): ?string
     {
@@ -305,7 +234,7 @@ class User implements UserInterface
     {
         if (!$this->properties->contains($property)) {
             $this->properties[] = $property;
-            $property->setProprietaire($this);
+            $property->setUser($this);
         }
 
         return $this;
@@ -315,11 +244,15 @@ class User implements UserInterface
     {
         if ($this->properties->removeElement($property)) {
             // set the owning side to null (unless already changed)
-            if ($property->getProprietaire() === $this) {
-                $property->setProprietaire(null);
+            if ($property->getUser() === $this) {
+                $property->setUser(null);
             }
         }
 
         return $this;
+    }
+    public function __toString()
+    {
+        return $this->getUsername();
     }
 }
