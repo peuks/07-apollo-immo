@@ -11,6 +11,9 @@
 			<li class="nav-item {{ (current_menu is defined and current_menu == 'properties') ? 'active' : '' }}">
 				<a class="nav-link" href="{{path('property.index')}}">Acheter</a>
 			</li>
+			<li class="nav-item {{ (current_menu is defined and current_menu == 'properties') ? 'active' : '' }}">
+				<a class="nav-link" href="{{path('dashboard.apply')}}">Mon dossier</a>
+			</li>
 		</ul>
 
 		<form class="form-inline my-2 my-lg-0">
@@ -24,17 +27,16 @@
 					{{ (app.user ) ? app.user.username : 'Anonyme' }}
 				</a>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
 					<a class="dropdown-item" href="#">
-						<div class="dropdown-divider"></div>
+
 						{% if app.user %}
+							<a href="{{path('dashboard.account')}}" class="dropdown-item">Mon Profile</a>
+							<div class="dropdown-divider"></div>
 							<a href="{{path('app_logout')}}" class="dropdown-item">Se déconnecter</a>
 						{% else %}
 							<a class="dropdown-item" href="{{path('app_login')}}">Se connecter</a>
 						{% endif %}
 					</a>
-
-
 				</div>
 			</li>
 		</ul>

@@ -12,6 +12,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 // Validation
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\Unique;
+
+// Upload
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
+
+
 
 /**
  * @ORM\Entity(repositoryClass=PropertyRepository::class)
