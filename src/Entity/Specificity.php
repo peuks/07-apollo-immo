@@ -24,14 +24,20 @@ class Specificity
      */
     private $name;
 
+
     /**
-     * @ORM\ManyToMany(targetEntity=Property::class, inversedBy="specificities")
+     * @ORM\ManyToOne(targetEntity=Specificity::class, inversedBy="specificities")
      */
-    private $properties;
+    private $parent;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Specificity::class, mappedBy="parent")
+     */
+    private $specificities;
 
     public function __construct()
     {
-        $this->properties = new ArrayCollection();
+        $this->specificities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -51,26 +57,44 @@ class Specificity
         return $this;
     }
 
-    /**
-     * @return Collection|Property[]
-     */
-    public function getProperties(): Collection
+    public function getParent(): ?self
     {
-        return $this->properties;
+        return $this->parent;
     }
 
-    public function addProperty(Property $property): self
+    public function setParent(?self $parent): self
     {
-        if (!$this->properties->contains($property)) {
-            $this->properties[] = $property;
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getSpecificities(): Collection
+    {
+        return $this->specificities;
+    }
+
+    public function addSpecificity(self $specificity): self
+    {
+        if (!$this->specificities->contains($specificity)) {
+            $this->specificities[] = $specificity;
+            $specificity->setParent($this);
         }
 
         return $this;
     }
 
-    public function removeProperty(Property $property): self
+    public function removeSpecificity(self $specificity): self
     {
-        $this->properties->removeElement($property);
+        if ($this->specificities->removeElement($specificity)) {
+            // set the owning side to null (unless already changed)
+            if ($specificity->getParent() === $this) {
+                $specificity->setParent(null);
+            }
+        }
 
         return $this;
     }

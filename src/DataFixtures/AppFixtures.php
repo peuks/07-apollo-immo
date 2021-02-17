@@ -140,24 +140,23 @@ class AppFixtures extends Fixture
         }
 
 
-        // Création de 3 options 
+        // Création de 3 Agréments 
 
         // ------------------------------------------------------------ \\
         // ----------------------------------Initialize Catégories -----\\
         // ------------------------------------------------------------- \\        
 
-        // // Store heatType's Objects
-        // $CategoriesArray = [];
+        // Store heatType's Objects
+        // $SpecificityArray = [];
 
         // for ($i = 0; $i < 3; $i++) {
         //     // Categories
-        //     $category = new Category;
-        //     $category->setTitle($faker->text(5));
-
-        //     // Store actual category in array
-        //     $CategoriesArray[] = $category;
-        //     // Persist actual category
-        //     $manager->persist($category);
+        //     $specificity = new Specificity;
+        //     $specificity->setName($faker->text(5));
+        //     // Store actual sp$specificity in array
+        //     $CategoriesArray[] = $specificity;
+        //     // Persist actual sp$specificity
+        //     $manager->persist($specificity);
         // }
 
 
