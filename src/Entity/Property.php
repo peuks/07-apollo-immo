@@ -178,22 +178,15 @@ class Property
      */
     private $user;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Specificity::class, mappedBy="properties")
-     */
-    private $specificities;
-
 
     public function __construct()
     {
         // set creat_at default value at actual time
         $this->created_at = new \DateTime();
-
         // set default value of sold to false
         $this->sold = false;
         $this->images = new ArrayCollection();
         $this->candidatures = new ArrayCollection();
-        $this->specificities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -507,33 +500,6 @@ class Property
     public function setUser(?User $user): self
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Specificity[]
-     */
-    public function getSpecificities(): Collection
-    {
-        return $this->specificities;
-    }
-
-    public function addSpecificity(Specificity $specificity): self
-    {
-        if (!$this->specificities->contains($specificity)) {
-            $this->specificities[] = $specificity;
-            $specificity->addProperty($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSpecificity(Specificity $specificity): self
-    {
-        if ($this->specificities->removeElement($specificity)) {
-            $specificity->removeProperty($this);
-        }
 
         return $this;
     }
